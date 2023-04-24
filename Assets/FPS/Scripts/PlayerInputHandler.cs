@@ -2,26 +2,30 @@
 
 public class PlayerInputHandler : MonoBehaviour
 {
-    [Tooltip("Sensitivity multiplier for moving the camera around")]
+    [Tooltip("相机移动的灵敏度倍增器。")]
     public float lookSensitivity = 1f;
-    [Tooltip("Additional sensitivity multiplier for WebGL")]
+    [Tooltip("WebGL的其他灵敏度乘数")]
     public float webglLookSensitivityMultiplier = 0.25f;
-    [Tooltip("Limit to consider an input when using a trigger on a controller")]
+    [Tooltip("使用控制器触发器时考虑输入的阈值。")]
     public float triggerAxisThreshold = 0.4f;
-    [Tooltip("Used to flip the vertical input axis")]
+    [Tooltip("用于翻转垂直输入轴")]
     public bool invertYAxis = false;
-    [Tooltip("Used to flip the horizontal input axis")]
+    [Tooltip("用于翻转水平输入轴")]
     public bool invertXAxis = false;
 
     GameFlowManager m_GameFlowManager;
     PlayerCharacterController m_PlayerCharacterController;
-    bool m_FireInputWasHeld;
+    bool m_FireInputWasHeld;//是否按下开枪键
 
     private void Start()
     {
         m_PlayerCharacterController = GetComponent<PlayerCharacterController>();
         DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterController, PlayerInputHandler>(m_PlayerCharacterController, this, gameObject);
+
+        //FindObjectOfType<type>返回第一个类型为 type 的已加载的激活对象。这里就是得到GameManager里的GameFlowManager组件.
         m_GameFlowManager = FindObjectOfType<GameFlowManager>();
+        // 若m_GameFlowManager为空(定位到哪个物哪个组件代码中需要什么组件没有),
+        // 则输出PlayerInputHandler组件在(player)gameObject上,期待在场景中找到m_GameFlowManager组件,但在场景中找不到
         DebugUtility.HandleErrorIfNullFindObject<GameFlowManager, PlayerInputHandler>(m_GameFlowManager, this);
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -33,6 +37,10 @@ public class PlayerInputHandler : MonoBehaviour
         m_FireInputWasHeld = GetFireInputHeld();
     }
 
+    /// <summary>
+    /// 条件:鼠标锁定在界面 && 不是死亡状态
+    /// </summary>
+    /// <returns></returns>
     public bool CanProcessInput()
     {
         return Cursor.lockState == CursorLockMode.Locked && !m_GameFlowManager.gameIsEnding;
@@ -93,23 +101,31 @@ public class PlayerInputHandler : MonoBehaviour
         return !GetFireInputHeld() && m_FireInputWasHeld;
     }
 
+    /// <summary>
+    /// 是否下达开枪命令
+    /// </summary>
+    /// <returns></returns>
     public bool GetFireInputHeld()
     {
-        if (CanProcessInput())
+        if (CanProcessInput()) //条件: 鼠标锁定在界面 && 不是死亡状态
         {
-            bool isGamepad = Input.GetAxis(GameConstants.k_ButtonNameGamepadFire) != 0f;
+            //这是手柄优先,判断手柄RT键只要有压下就以手柄为准
+            bool isGamepad = (Input.GetAxis(GameConstants.k_ButtonNameGamepadFire) != 0f);
             if (isGamepad)
             {
+                //手柄RT压下超过阈值0.4就下达开枪命令
                 return Input.GetAxis(GameConstants.k_ButtonNameGamepadFire) >= triggerAxisThreshold;
             }
             else
             {
+                //鼠标一按下就下达开枪命令
                 return Input.GetButton(GameConstants.k_ButtonNameFire);
             }
         }
 
         return false;
     }
+
 
     public bool GetAimInputHeld()
     {
