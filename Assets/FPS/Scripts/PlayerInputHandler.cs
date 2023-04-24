@@ -20,13 +20,13 @@ public class PlayerInputHandler : MonoBehaviour
     private void Start()
     {
         m_PlayerCharacterController = GetComponent<PlayerCharacterController>();
-        DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterController, PlayerInputHandler>(m_PlayerCharacterController, this, gameObject);
+        //DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterController, PlayerInputHandler>(m_PlayerCharacterController, this, gameObject);
 
         //FindObjectOfType<type>返回第一个类型为 type 的已加载的激活对象。这里就是得到GameManager里的GameFlowManager组件.
         m_GameFlowManager = FindObjectOfType<GameFlowManager>();
-        // 若m_GameFlowManager为空(定位到哪个物哪个组件代码中需要什么组件没有),
-        // 则输出PlayerInputHandler组件在(player)gameObject上,期待在场景中找到m_GameFlowManager组件,但在场景中找不到
-        DebugUtility.HandleErrorIfNullFindObject<GameFlowManager, PlayerInputHandler>(m_GameFlowManager, this);
+        //// 若m_GameFlowManager为空(定位到哪个物哪个组件代码中需要什么组件没有),
+        //// 则输出PlayerInputHandler组件在(player)gameObject上,期待在场景中找到m_GameFlowManager组件,但在场景中找不到
+        //DebugUtility.HandleErrorIfNullFindObject<GameFlowManager, PlayerInputHandler>(m_GameFlowManager, this);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -34,6 +34,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void LateUpdate()
     {
+        //判断是否开枪
         m_FireInputWasHeld = GetFireInputHeld();
     }
 
@@ -52,7 +53,7 @@ public class PlayerInputHandler : MonoBehaviour
         {
             Vector3 move = new Vector3(Input.GetAxisRaw(GameConstants.k_AxisNameHorizontal), 0f, Input.GetAxisRaw(GameConstants.k_AxisNameVertical));
 
-            // constrain move input to a maximum magnitude of 1, otherwise diagonal movement might exceed the max move speed defined
+            // 将移动输入限制在最大幅度为1，否则对角线移动可能会超过定义的最大移动速度。
             move = Vector3.ClampMagnitude(move, 1);
 
             return move;

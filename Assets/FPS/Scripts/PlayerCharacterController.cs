@@ -5,81 +5,75 @@ using UnityEngine.Events;
 public class PlayerCharacterController : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("Reference to the main camera used for the player")]
     public Camera playerCamera;
-    [Tooltip("Audio source for footsteps, jump, etc...")]
     public AudioSource audioSource;
 
     [Header("General")]
-    [Tooltip("Force applied downward when in the air")]
+    [Tooltip("当在空中时施加向下的力。")]
     public float gravityDownForce = 20f;
-    [Tooltip("Physic layers checked to consider the player grounded")]
+    [Tooltip("在考虑玩家是否着陆时，要检查物理层。")]
     public LayerMask groundCheckLayers = -1;
-    [Tooltip("distance from the bottom of the character controller capsule to test for grounded")]
+    [Tooltip("要测试是否着陆，需要从角色控制器胶囊体底部开始测量的距离。")]
     public float groundCheckDistance = 0.05f;
 
-    [Header("Movement")]
-    [Tooltip("Max movement speed when grounded (when not sprinting)")]
+    [Tooltip("地面最大移动速度 (没有冲刺的情况下)")]
     public float maxSpeedOnGround = 10f;
-    [Tooltip("Sharpness for the movement when grounded, a low value will make the player accelerate and decelerate slowly, a high value will do the opposite")]
+    [Tooltip("地面时的加速度")]
     public float movementSharpnessOnGround = 15;
-    [Tooltip("Max movement speed when crouching")]
+    [Tooltip("最大蹲下时的移动速度。")]
     [Range(0,1)]
     public float maxSpeedCrouchedRatio = 0.5f;
-    [Tooltip("Max movement speed when not grounded")]
+    [Tooltip("空中最大速度")]
     public float maxSpeedInAir = 10f;
-    [Tooltip("Acceleration speed when in the air")]
+    [Tooltip("空中最大加速度")]
     public float accelerationSpeedInAir = 25f;
-    [Tooltip("Multiplicator for the sprint speed (based on grounded speed)")]
+    [Tooltip("以接触地面时速度为基础的冲刺速度乘数。")]
     public float sprintSpeedModifier = 2f;
-    [Tooltip("Height at which the player dies instantly when falling off the map")]
+    [Tooltip("玩家从地图上坠落而立即死亡的高度。")]
     public float killHeight = -50f;
 
-    [Header("Rotation")]
-    [Tooltip("Rotation speed for moving the camera")]
+    
+    [Tooltip("移动相机时的旋转速度")]
     public float rotationSpeed = 200f;
     [Range(0.1f, 1f)]
-    [Tooltip("Rotation speed multiplier when aiming")]
+    [Tooltip("瞄准时旋转速度的倍增器。")]
     public float aimingRotationMultiplier = 0.4f;
 
     [Header("Jump")]
-    [Tooltip("Force applied upward when jumping")]
     public float jumpForce = 9f;
 
     [Header("Stance")]
-    [Tooltip("Ratio (0-1) of the character height where the camera will be at")]
+    [Tooltip("摄像机高度处角色高度的比率（0-1之间）")]
     public float cameraHeightRatio = 0.9f;
-    [Tooltip("Height of character when standing")]
+    [Tooltip("人物直立时的高度")]
     public float capsuleHeightStanding = 1.8f;
-    [Tooltip("Height of character when crouching")]
+    [Tooltip("人物蹲下时的高度")]
     public float capsuleHeightCrouching = 0.9f;
-    [Tooltip("Speed of crouching transitions")]
+    [Tooltip("蹲下转换的速度")]
     public float crouchingSharpness = 10f;
 
     [Header("Audio")]
-    [Tooltip("Amount of footstep sounds played when moving one meter")]
+    [Tooltip("每移动一米播放的脚步声数量")]
     public float footstepSFXFrequency = 1f;
-    [Tooltip("Amount of footstep sounds played when moving one meter while sprinting")]
+    [Tooltip("快跑时每移动一米播放的脚步声数量")]
     public float footstepSFXFrequencyWhileSprinting = 1f;
-    [Tooltip("Sound played for footsteps")]
     public AudioClip footstepSFX;
-    [Tooltip("Sound played when jumping")]
     public AudioClip jumpSFX;
-    [Tooltip("Sound played when landing")]
+    [Tooltip("降落的声音")]
     public AudioClip landSFX;
-    [Tooltip("Sound played when taking damage froma fall")]
+    [Tooltip("从跌落中受伤时播放的声音")]
     public AudioClip fallDamageSFX;
 
     [Header("Fall Damage")]
-    [Tooltip("Whether the player will recieve damage when hitting the ground at high speed")]
+    [Tooltip("是否接收掉落伤害")]
     public bool recievesFallDamage;
-    [Tooltip("Minimun fall speed for recieving fall damage")]
+    [Tooltip("需要多小下落速度才能有掉落伤害。")]
     public float minSpeedForFallDamage = 10f;
-    [Tooltip("Fall speed for recieving th emaximum amount of fall damage")]
+    [Tooltip("以多大的速度掉落会受到最大伤害。")]
     public float maxSpeedForFallDamage = 30f;
-    [Tooltip("Damage recieved when falling at the mimimum speed")]
+    [Tooltip("掉落最小伤害量")]
     public float fallDamageAtMinSpeed = 10f;
-    [Tooltip("Damage recieved when falling at the maximum speed")]
+    [Tooltip("掉落最大伤害量")]
     public float fallDamageAtMaxSpeed = 50f;
 
     public UnityAction<bool> onStanceChanged;
